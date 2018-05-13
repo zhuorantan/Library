@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}入库管理{% endblock %}
+
+{% block content %}
+<script>
+    var $table = $('#table');
+
+    $(function() {
+        $table.bootstrapTable({
+            url: '{{ data_url }}',
+            idField: 'isbn',
+            detailView: true,
+            sortName: 'isbn',
+            columns: [
+                {
+                    title: 'ISBN',
+                    field: 'isbn',
+                    align: 'center',
+                    sortable: true,
+                    clickToSelect: false
+                }, {
+                    field: 'book_name',
+                    title: '书名',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'author',
+                    title: '作者',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'publisher',
+                    title: '出版商',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'publish_year_month',
+                    title: '出版日期',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'book_ids',
+                    title: '册数',
+                    sortable: true,
+                    formatter: booksFormatter,
+                    align: 'center',
+                    searchFormatter: false
+                },
+                {
+                    field: 'librarian_name',
+                    title: '经办人',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }
+            ]
+        });
+        // sometimes footer render error.
+        setTimeout(function() {
+            $table.bootstrapTable('resetView');
+        }, 200);
+        $table.on('all.bs.table', function(e, name, args) {
+            console.log(name, args);
+        });
+        $table.on('click-cell.bs.table', function(e, field, value, row) {
+            if (['author', 'publisher', 'publish_year_month', 'librarian_name'].includes(field)) {
+                $table.bootstrapTable('resetSearch', value);
+            }
+        });
+        $table.on('expand-row.bs.table', function(e, index, row, $detail) {
+            $.get( "{{ url_for('cip_books') }}?isbn=" + row.isbn + '&index=' + index.toString(), function( data ) {
+                $detail.html(data);
+            });
+        });
+        $(window).resize(function() {
+            $table.bootstrapTable('resetView', {
+                height: getHeight()
+            });
+        });
+    });
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>',
+            ' ',
+            '<a class="remove" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove': function(e, value, row, index) {
+            $table.bootstrapTable('remove', {
+                field: 'isbn',
+                values: [row.isbn]
+            });
+        }
+    };
+
+    function booksFormatter(data) {
+        return data.split(';').length;
+    }
+
+    function getHeight() {
+        return $(window).height() - $('h1').outerHeight(true);
+    }
+</script>
+{% endblock %}

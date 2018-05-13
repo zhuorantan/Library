@@ -1,14 +1,24 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, Date, ForeignKey, BOOLEAN, create_engine
+from sqlalchemy import Column, Integer, String, Enum, Date, ForeignKey, BOOLEAN
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import enum
 
 
-class BookState(enum.Enum):
+class BookStatus(enum.Enum):
     borrowed = 1
-    unborrowed = 2
+    available = 2
     reserved = 3
-    can_not_be_borrowed = 4
+    unborrowable = 4
+
+    def name(self):
+        if self == BookStatus.borrowed:
+            return "已借出"
+        elif self == BookStatus.available:
+            return "未借出"
+        elif self == BookStatus.reserved:
+            return "已预约"
+        elif self == BookStatus.unborrowable:
+            return "不外借"
 
 
 Base = declarative_base()
@@ -22,6 +32,13 @@ class User(Base):
     password = Column(String(30))
 
     type = Column(String(30))
+
+    is_authenticated = Column(BOOLEAN, default=False)
+    is_active = True
+    is_anonymous = False
+
+    def get_id(self):
+        return self.id
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -48,10 +65,9 @@ class Librarian(User):
 class Reader(User):
     tel = Column(String(30))
     email = Column(String(30))
-    borrow_num = Column(Integer)
 
     borrows = relationship('Borrow', back_populates='reader')
-    reserves = relationship('Reserve', back_populates='reader')
+    reservations = relationship('Reservation', back_populates='reader')
 
     __mapper_args__ = {
         'polymorphic_identity': 'reader'
@@ -64,7 +80,7 @@ class Reader(User):
             'password': self.password,
             'tel': self.tel,
             'email': self.email,
-            'borrow_num': self.borrow_num
+            'borrows': [borrow.properties() for borrow in self.borrows]
         }
 
 
@@ -76,21 +92,24 @@ class CIP(Base):
     author = Column(String(30))
     publisher = Column(String(30))
     publish_year_month = Column(Date)
-    books_num = Column(Integer)
     librarian_id = Column(String(30), ForeignKey('user.id'))
 
     librarian = relationship('Librarian', back_populates='cips')
     books = relationship('Book', back_populates='cip')
-    reserves = relationship('Reserve', back_populates='cip')
+    reservations = relationship('Reservation', back_populates='cip')
+
+    def books_num(self):
+        return len(self.books)
 
     def properties(self):
         return {
-            'id': self.isbn,
+            'isbn': self.isbn,
             'book_name': self.book_name,
             'author': self.author,
             'publisher': self.publisher,
-            'publish_year_month': self.publish_year_month.isoformat(),
-            'quantity': self.books_num,
+            'publish_year_month': self.publish_year_month.strftime('%Y-%m'),
+            'books': [book.properties() for book in self.books],
+            'book_ids': ';'.join(book.id for book in self.books),
             'librarian_name': self.librarian.name
         }
 
@@ -101,32 +120,21 @@ class Book(Base):
     id = Column(String(30), primary_key=True)
     cip_id = Column(String(30), ForeignKey('cip.isbn'))
     location = Column(String(30))
-    state = Column(Enum(BookState))
+    status = Column(Enum(BookStatus))
     librarian_id = Column(String(30), ForeignKey('user.id'))
 
     cip = relationship('CIP', back_populates='books')
     librarian = relationship('Librarian', back_populates='books')
     borrows = relationship('Borrow', back_populates='book')
-    reserved = relationship('Reserve', back_populates='book')
 
     def properties(self):
         return {
             'id': self.id,
             'cip_id': self.cip_id,
             'location': self.location,
-            'state': self.getstate(),
-            'librarian_id': self.librarian_id
+            'status': self.status.name(),
+            'librarian_name': self.librarian.name
         }
-
-    def getstate(self):
-        if self.state == BookState.borrowed:
-            return "已借出"
-        elif self.state == BookState.unborrowed:
-            return "未借出"
-        elif self.state == BookState.reserved:
-            return "已预约"
-        else:
-            return "不外借"
 
 
 class Borrow(Base):
@@ -135,7 +143,7 @@ class Borrow(Base):
     reader_id = Column(String(30), ForeignKey('user.id'), primary_key=True)
     book_id = Column(String(30), ForeignKey('book.id'), primary_key=True)
     borrow_date = Column(Date, primary_key=True)
-    should_return_date = Column(Date)
+    excepted_return_date = Column(Date)
     actual_return_date = Column(Date)
 
     reader = relationship('Reader', back_populates='borrows')
@@ -146,29 +154,26 @@ class Borrow(Base):
             'reader_id': self.reader_id,
             'book_id': self. book_id,
             'borrow_date': self.borrow_date.isoformat(),
-            'should_return_date': self.should_return_date.isoformat(),
+            'expected_return_date': self.excepted_return_date.isoformat(),
             'actual_return_date': self.actual_return_date.isoformat()
         }
 
 
-class Reserve(Base):
-    __tablename__ = 'reserve'
+class Reservation(Base):
+    __tablename__ = 'reservation'
 
     reader_id = Column(String(30), ForeignKey('user.id'), primary_key=True)
     cip_id = Column(String(30), ForeignKey('cip.isbn'), primary_key=True)
     reserve_date = Column(Date, primary_key=True)
     reserve_deadline = Column(Date)
-    book_id = Column(String(30), ForeignKey('book.id'))
 
-    reader = relationship('Reader', back_populates='reserves')
-    cip = relationship('CIP', back_populates='reserves')
-    book = relationship('Book', back_populates='reserved')
+    reader = relationship('Reader', back_populates='reservations')
+    cip = relationship('CIP', back_populates='reservations')
 
     def properties(self):
         return {
             'reader_id': self.reader_id,
             'cip_id': self.cip_id,
             'reserve_date': self.reserve_date.isoformat(),
-            'reserve_deadline': self.reserve_deadline.isoformat(),
-            'book_id': self.book_id
+            'reserve_deadline': self.reserve_deadline.isoformat()
         }

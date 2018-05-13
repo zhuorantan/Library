@@ -1,0 +1,85 @@
+<table id="book_table_{{ index }}"></table>
+
+<script>
+    var $table = $('#book_table_{{ index }}');
+
+    $(function() {
+        $table.bootstrapTable({
+            url: '{{ data_url }}',
+            idField: 'id',
+            sortName: 'id',
+            columns: [
+                {
+                    title: '图书ID',
+                    field: 'id',
+                    align: 'center',
+                    sortable: true
+                }, {
+                    field: 'location',
+                    title: '存放位置',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'librarian_name',
+                    title: '经办人',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }
+            ]
+        });
+        // sometimes footer render error.
+        setTimeout(function() {
+            $table.bootstrapTable('resetView');
+        }, 200);
+        $table.on('all.bs.table', function(e, name, args) {
+            console.log(name, args);
+        });
+        $(window).resize(function() {
+            $table.bootstrapTable('resetView', {
+                height: getHeight()
+            });
+        });
+    });
+
+    function operateFormatter(value, row, index) {
+        var html = [];
+
+        if (row.status === '未借出') {
+            html.push('<a class="borrow_book" href="javascript:void(0)" title="借书">借书</a>');
+            html.push('<a class="remove_book" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>')
+        }
+        // html = [
+        //     '<a class="edit_book" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>',
+        //     '<a class="remove_book" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>'
+        // ];
+
+        return html.join(' ');
+    }
+
+    window.operateEvents = {
+        'click .remove_book': function(e, value, row, index) {
+            $table.bootstrapTable('remove', {
+                field: 'id',
+                values: [row.id]
+            });
+        }
+    };
+
+    function getHeight() {
+        return $(window).height() - $('h1').outerHeight(true);
+    }
+</script>
