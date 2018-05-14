@@ -48,7 +48,8 @@
               $(function () {
                   $('#datetimepicker1').datetimepicker({
                       format: 'YYYY-MM',
-                      locale: 'zh-cn'
+                      locale: 'zh-cn',
+                      maxDate: moment()
                   });
               });
           </script>
@@ -132,7 +133,7 @@
 
       $(function() {
           $table.bootstrapTable({
-              url: '{{ data_url }}',
+              url: 'cips',
               idField: 'isbn',
               detailView: true,
               sortName: 'isbn',
@@ -170,7 +171,7 @@
                   },
                   {
                       field: 'book_ids',
-                      title: '册数',
+                      title: '可借 / 总册数',
                       sortable: true,
                       formatter: booksFormatter,
                       align: 'center',
@@ -217,11 +218,19 @@
       });
 
       function operateFormatter(value, row, index) {
-          return [
-              '<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>',
-              ' ',
-              '<a class="remove" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>'
-          ].join('');
+          var html = [];
+
+          if (row.reservable) {
+              html.push('<a class="reserve" href="javascript:void(0)" title="预约">预约</a>')
+          }
+
+          html.push('<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>');
+
+          if (row.deletable) {
+              html.push('<a class="remove" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>')
+          }
+
+          return html.join(' ');
       }
 
       function onFormISBNInput(value) {
@@ -284,6 +293,9 @@
       }
 
       window.operateEvents = {
+          'click .reserve': function (e, value, row, index) {
+
+          },
           'click .edit': function (e, value, row, index) {
               $('#form_update_isbn').val(row.isbn);
               $('#form_update_book_name').val(row.book_name);
@@ -306,11 +318,12 @@
           }
       };
 
-      function booksFormatter(data) {
+      function booksFormatter(data, row) {
           if (data === '') {
-              return 0;
+              return '0 / 0';
           }
-          return data.split(';').length;
+
+          return row.available_count.toString() + ' / ' + data.split(';').length;
       }
 
       function getHeight() {

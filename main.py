@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from database import db_session, init_db
 from tables import *
 from datetime import date, datetime
+from sqlalchemy import or_
 
 app = Flask(__name__)
 
@@ -231,7 +232,7 @@ def books_management():
         {'name': '预约管理', 'link': 'reserve'},
         {'name': '还书管理', 'link': 'return'}
     ]
-    return render_template('books_management.html', nav_items=nav_items, data_url='cips', book_locations=['图书流通室', '图书阅览室'])
+    return render_template('books_management.html', nav_items=nav_items, book_locations=['图书流通室', '图书阅览室'])
 
 
 @app.route('/cip_books')
@@ -249,7 +250,27 @@ def cips():
         cips = CIP.query.filter(CIP.isbn.startswith(isbn_prefix))
     else:
         cips = CIP.query.all()
-    return jsonify([cip.properties() for cip in cips])
+
+    properties = [cip.properties() for cip in cips]
+
+    for index in range(len(properties)):
+        cip = cips[index]
+        properties[index]['deletable'] = all([book.status == BookStatus.available for book in cip.books])
+        properties[index]['reservable'] = all([book.status != BookStatus.available for book in cip.books])
+
+    return jsonify(properties)
+
+
+@app.route('/readers', methods=['GET'])
+@login_required
+def readers():
+    query_text = request.args.get('query_text')
+
+    if query_text:
+        readers = Reader.query.filter(or_(Reader.id.like('%' + query_text + '%'), Reader.name.like('%' + query_text + '%')))
+    else:
+        readers = Reader.query.all()
+    return jsonify([reader.properties() for reader in readers])
 
 
 @app.route('/cip', methods=['GET'])
@@ -293,6 +314,27 @@ def book_entry():
 
     db_session.add(book)
     db_session.commit()
+    return redirect('/')
+
+
+@app.route('/book_borrow', methods=['POST'])
+@login_required
+def book_borrow():
+    reader_id = request.form['reader_id']
+    book_id = request.form['book_id']
+
+    reader = Reader.query.get(reader_id)
+    if not reader:
+        return redirect('/')
+
+    book = Book.query.get(book_id)
+    book.status = BookStatus.borrowed
+
+    borrow = Borrow(reader=reader, book=book, borrow_date=date.today(), excepted_return_date=datetime.strptime(request.form['deadline'], '%Y-%m-%d').date())
+
+    db_session.add(borrow)
+    db_session.commit()
+
     return redirect('/')
 
 

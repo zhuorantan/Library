@@ -110,7 +110,8 @@ class CIP(Base):
             'publish_date': self.publish_year_month.strftime('%Y-%m'),
             'books': [book.properties() for book in self.books],
             'book_ids': ';'.join(book.id for book in self.books),
-            'librarian_name': self.librarian.name
+            'librarian_name': self.librarian.name,
+            'available_count': len([book for book in self.books if book.status == BookStatus.available])
         }
 
 
@@ -144,19 +145,23 @@ class Borrow(Base):
     book_id = Column(String(30), ForeignKey('book.id'), primary_key=True)
     borrow_date = Column(Date, primary_key=True)
     excepted_return_date = Column(Date)
-    actual_return_date = Column(Date)
+    actual_return_date = Column(Date, default=None)
 
     reader = relationship('Reader', back_populates='borrows')
     book = relationship('Book', back_populates='borrows')
 
     def properties(self):
-        return {
+        properties = {
             'reader_id': self.reader_id,
             'book_id': self. book_id,
             'borrow_date': self.borrow_date.isoformat(),
-            'expected_return_date': self.excepted_return_date.isoformat(),
-            'actual_return_date': self.actual_return_date.isoformat()
+            'expected_return_date': self.excepted_return_date.isoformat()
         }
+
+        if self.actual_return_date:
+            properties['actual_return_date'] = self.actual_return_date.isoformat()
+
+        return properties
 
 
 class Reservation(Base):
