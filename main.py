@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from database import db_session, init_db
 from tables import *
-from datetime import date
+from datetime import date, datetime
 
 app = Flask(__name__)
 
@@ -193,7 +193,7 @@ def load_user(user_id):
 def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return redirect(url_for('book_entry'))
+            return redirect(url_for('books_management'))
         else:
             return render_template('login.html')
     if request.method == 'POST':
@@ -222,16 +222,16 @@ def logout():
     return redirect('/')
 
 
-@app.route('/book_entry', methods=['GET'])
+@app.route('/books_management', methods=['GET'])
 @login_required
-def book_entry():
+def books_management():
     nav_items = [
         {'name': '图书管理', 'active': True},
         {'name': '借书管理', 'link': 'borrow'},
         {'name': '预约管理', 'link': 'reserve'},
         {'name': '还书管理', 'link': 'return'}
     ]
-    return render_template('book_entry.html', nav_items=nav_items, data_url='cips')
+    return render_template('books_management.html', nav_items=nav_items, data_url='cips', book_locations=['图书流通室', '图书阅览室'])
 
 
 @app.route('/cip_books')
@@ -240,11 +240,26 @@ def cip_books():
     return render_template('cip_books.html', data_url='books?isbn=%s' % request.args['isbn'], index=request.args['index'])
 
 
-@app.route('/cips', methods=['GET', 'OPTIONS'])
+@app.route('/cips', methods=['GET'])
 @login_required
 def cips():
-    cips = CIP.query.all()
+    isbn_prefix = request.args.get('isbn_prefix', None)
+
+    if isbn_prefix:
+        cips = CIP.query.filter(CIP.isbn.startswith(isbn_prefix))
+    else:
+        cips = CIP.query.all()
     return jsonify([cip.properties() for cip in cips])
+
+
+@app.route('/cip', methods=['GET'])
+@login_required
+def cip():
+    isbn = request.args.get('isbn', None)
+
+    cip = CIP.query.get(isbn)
+
+    return jsonify(cip.properties())
 
 
 @app.route('/books', methods=['GET'])
@@ -253,6 +268,66 @@ def books():
     isbn = request.args['isbn']
     books = Book.query.filter(Book.cip_id == isbn)
     return jsonify([book.properties() for book in books])
+
+
+@app.route('/book_entry', methods=['POST'])
+@login_required
+def book_entry():
+    isbn = request.form['isbn']
+    librarian = current_user
+
+    cip = CIP.query.get(isbn)
+    if cip is None:
+        book_name = request.form['book_name']
+        author = request.form['author']
+        publisher = request.form['publisher']
+        publish_year_month = datetime.strptime(request.form['publish_date'], '%Y-%m').date()
+
+        cip = CIP(isbn=isbn, book_name=book_name, author=author, publisher=publisher, publish_year_month=publish_year_month, librarian=librarian)
+
+    location = request.form['location']
+    book_id = request.form['book_id']
+
+    status = BookStatus.available if location == '图书流通室' else BookStatus.unborrowable
+    book = Book(id=book_id, cip=cip, location=location, status=status, librarian=librarian)
+
+    db_session.add(book)
+    db_session.commit()
+    return redirect('/')
+
+
+@app.route('/update_cip', methods=['POST'])
+@login_required
+def update_cip():
+    isbn = request.form['isbn']
+    cip = CIP.query.get(isbn)
+    cip.book_name = request.form['book_name']
+    cip.author = request.form['author']
+    cip.publisher = request.form['publisher']
+    cip.publish_year_month = datetime.strptime(request.form['publish_date'], '%Y-%m').date()
+
+    db_session.commit()
+    return redirect('/')
+
+
+@app.route('/delete_cip', methods=['DELETE'])
+@login_required
+def delete_cip():
+    isbn = request.args['isbn']
+    cip = CIP.query.get(isbn)
+    db_session.delete(cip)
+    db_session.commit()
+    return jsonify({'success': True})
+
+
+@app.route('/delete_book', methods=['DELETE'])
+@login_required
+def delete_book():
+    book_id = request.args['book_id']
+    book = Book.query.get(book_id)
+    db_session.delete(book)
+    db_session.commit()
+    return jsonify({'success': True})
 
 
 @app.teardown_appcontext

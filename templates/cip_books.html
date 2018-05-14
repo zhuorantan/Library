@@ -76,6 +76,11 @@
                 field: 'id',
                 values: [row.id]
             });
+
+            $.ajax({
+                  url: "delete_book?book_id=" + row.id,
+                  method: "DELETE"
+              });
         }
     };
 

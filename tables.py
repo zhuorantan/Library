@@ -107,7 +107,7 @@ class CIP(Base):
             'book_name': self.book_name,
             'author': self.author,
             'publisher': self.publisher,
-            'publish_year_month': self.publish_year_month.strftime('%Y-%m'),
+            'publish_date': self.publish_year_month.strftime('%Y-%m'),
             'books': [book.properties() for book in self.books],
             'book_ids': ';'.join(book.id for book in self.books),
             'librarian_name': self.librarian.name
