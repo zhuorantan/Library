@@ -45,6 +45,88 @@
     </div>
 </div>
 
+<div class="modal fade" id="borrowedModal{{ index }}" tabindex="-1" role="dialog" aria-labelledby="borrowedModalLabel{{ index }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="borrowedModalLabel{{ index }}">借书信息</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th class="text-right">读者ID</th>
+                        <td id="borrowed_reader_id{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">姓名</th>
+                        <td id="borrowed_reader_name{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">电话</th>
+                        <td  id="borrowed_reader_tel{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">邮箱</th>
+                        <td id="borrowed_reader_email{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">借书日期</th>
+                        <td id="borrowed_date{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">终止日期</th>
+                        <td id="borrowed_expected_return_date{{ index }}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reservationModal{{ index }}" tabindex="-1" role="dialog" aria-labelledby="reservationModalLabel{{ index }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="reservationModalLabel{{ index }}">预约信息</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th class="text-right">读者ID</th>
+                        <td id="reservation_reader_id{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">姓名</th>
+                        <td id="reservation_reader_name{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">电话</th>
+                        <td  id="reservation_reader_tel{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">邮箱</th>
+                        <td id="reservation_reader_email{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">预约日期</th>
+                        <td id="reservation_date{{ index }}"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">终止日期</th>
+                        <td id="reservation_deadline{{ index }}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var $table = $('#book_table_{{ index }}'),
         $form_borrow_reader_menu = $('#form_borrow_reader_menu{{ index }}');
@@ -70,7 +152,9 @@
                     field: 'status',
                     title: '状态',
                     sortable: true,
-                    align: 'center'
+                    align: 'center',
+                    events: statusEvents,
+                    formatter: statusFormatter
                 },
                 {
                     field: 'librarian_name',
@@ -128,6 +212,14 @@
         $('#form_borrow_reader_id{{ index }}').val(value.split(' ')[0]);
     }
 
+    function statusFormatter(value, row, index) {
+        if (value === '未借出') {
+            return value;
+        } else {
+            return '<a class="book_status" href="javascript:void(0)" title="' + value + '">' + value + '</a>';
+        }
+    }
+
     function operateFormatter(value, row, index) {
         var html = [];
 
@@ -143,9 +235,38 @@
         return html.join(' ');
     }
 
+    window.statusEvents = {
+        'click .book_status': function (e, value, row, index) {
+            if (value === '已借出') {
+                $.get('borrowed_info?book_id=' + row.id, function (data) {
+                    $('#borrowed_reader_id{{ index }}').html(data.reader.id);
+                    $('#borrowed_reader_name{{ index }}').html(data.reader.name);
+                    $('#borrowed_reader_tel{{ index }}').html(data.reader.tel);
+                    $('#borrowed_reader_email{{ index }}').html(data.reader.email);
+                    $('#borrowed_date{{ index }}').html(moment(data.borrow_date).format('YYYY 年 M 月 D 日'));
+                    $('#borrowed_expected_return_date{{ index }}').html(moment(data.expected_return_date).format('YYYY 年 M 月 D 日'));
+                    $('#borrowedModal{{ index }}').modal();
+                });
+            } else if (value === '已预约') {
+                $.get('reservation_info?book_id=' + row.id, function (data) {
+                    $('#reservation_reader_id{{ index }}').html(data.reader.id);
+                    $('#reservation_reader_name{{ index }}').html(data.reader.name);
+                    $('#reservation_reader_tel{{ index }}').html(data.reader.tel);
+                    $('#reservation_reader_email{{ index }}').html(data.reader.email);
+                    $('#reservation_date{{ index }}').html(moment(data.reserve_date).format('YYYY 年 M 月 D 日'));
+                    $('#reservation_deadline{{ index }}').html(moment(data.reserve_date).add(data.duration, 'days').format('YYYY 年 M 月 D 日'));
+
+                    $('#reservationModal{{ index }}').modal();
+                });
+            }
+        }
+    };
+
     window.operateEvents = {
         'click .borrow_book': function (e, value, row, index) {
             $('#form_borrow_book_id{{ index }}').val(row.id);
+            $('#form_borrow_reader_id{{ index }}').val('');
+            $('#form_borrow_reader_id{{ index }}').prop('readonly', false);
             $('#borrowModal{{ index }}').modal();
         },
         'click .remove_book': function(e, value, row, index) {
@@ -168,8 +289,9 @@
             });
         },
         'click .borrow_reserved_book': function (e, value, row, index) {
+            console.log(row);
             $('#form_borrow_book_id{{ index }}').val(row.id);
-            $('#form_borrow_reader_id{{ index }}').val(row.reservation.reader_id);
+            $('#form_borrow_reader_id{{ index }}').val(row.reservation.reader.id);
             $('#form_borrow_reader_id{{ index }}').prop('readonly', true);
             $('#borrowModal{{ index }}').modal();
         }

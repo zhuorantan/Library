@@ -212,7 +212,8 @@
                     field: 'publish_date',
                     title: '出版日期',
                     sortable: true,
-                    align: 'center'
+                    align: 'center',
+                    formatter: publishDateFormatter
                 },
                 {
                     field: 'book_ids',
@@ -397,6 +398,10 @@
         }
 
         return row.available_count.toString() + ' / ' + data.split(';').length;
+    }
+
+    function publishDateFormatter(data, row) {
+        return moment(data).format('YYYY 年 M 月')
     }
 
     function getHeight() {

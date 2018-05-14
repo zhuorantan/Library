@@ -79,8 +79,7 @@ class Reader(User):
             'name': self.name,
             'password': self.password,
             'tel': self.tel,
-            'email': self.email,
-            'borrows': [borrow.properties() for borrow in self.borrows]
+            'email': self.email
         }
 
 
@@ -158,7 +157,7 @@ class Borrow(Base):
 
     def properties(self):
         properties = {
-            'reader_id': self.reader_id,
+            'reader': self.reader.properties(),
             'book_id': self. book_id,
             'borrow_date': self.borrow_date.isoformat(),
             'expected_return_date': self.excepted_return_date.isoformat()
@@ -185,8 +184,8 @@ class Reservation(Base):
 
     def properties(self):
         return {
-            'reader_id': self.reader_id,
             'cip_id': self.cip_id,
             'reserve_date': self.reserve_date.isoformat(),
-            'duration': self.duration
+            'duration': self.duration,
+            'reader': self.reader.properties()
         }

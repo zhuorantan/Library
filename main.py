@@ -291,6 +291,28 @@ def books():
     return jsonify([book.properties() for book in books])
 
 
+@app.route('/borrowed_info', methods=['GET'])
+@login_required
+def borrowed_info():
+    book_id = request.args['book_id']
+    book = Book.query.get(book_id)
+    borrows = [borrow for borrow in book.borrows if borrow.actual_return_date is None]
+
+    if len(borrows) > 0:
+        return jsonify(borrows[0].properties())
+    else:
+        return jsonify([])
+
+
+@app.route('/reservation_info', methods=['GET'])
+@login_required
+def reservation_info():
+    book_id = request.args['book_id']
+    book = Book.query.get(book_id)
+
+    return jsonify(book.reservation.properties())
+
+
 @app.route('/book_entry', methods=['POST'])
 @login_required
 def book_entry():
@@ -331,6 +353,9 @@ def book_borrow():
     book.status = BookStatus.borrowed
 
     borrow = Borrow(reader=reader, book=book, borrow_date=date.today(), excepted_return_date=datetime.strptime(request.form['deadline'], '%Y-%m-%d').date())
+
+    if book.reservation:
+        db_session.delete(book.reservation)
 
     db_session.add(borrow)
     db_session.commit()
