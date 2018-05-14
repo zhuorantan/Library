@@ -338,6 +338,48 @@ def book_borrow():
     return redirect('/')
 
 
+@app.route('/book_reserve', methods=['POST'])
+@login_required
+def book_reserve():
+    reader_id = request.form['reader_id']
+    isbn = request.form['isbn']
+
+    reader = Reader.query.get(reader_id)
+    if not reader:
+        return redirect('/')
+
+    cip = CIP.query.get(isbn)
+
+    reservation = Reservation(reader=reader, cip=cip, reserve_date=date.today(), duration=request.form['duration'])
+
+    db_session.add(reservation)
+    db_session.commit()
+
+    return redirect('/')
+
+
+@app.route('/book_return', methods=['POST'])
+@login_required
+def book_return():
+    book_id = request.form['book_id']
+
+    book = Book.query.get(book_id)
+    borrow = [borrow for borrow in book.borrows if borrow.actual_return_date is None][0]
+    borrow.actual_return_date = date.today()
+
+    pending_reservations = [reservation for reservation in book.cip.reservations if reservation.book is None]
+    if len(pending_reservations) > 0:
+        reservation = pending_reservations[0]
+        reservation.book = book
+        book.status = BookStatus.reserved
+    else:
+        book.status = BookStatus.available
+
+    db_session.commit()
+
+    return redirect('/')
+
+
 @app.route('/update_cip', methods=['POST'])
 @login_required
 def update_cip():

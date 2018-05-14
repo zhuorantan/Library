@@ -5,29 +5,29 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="borrowModalLabel{{ index }}">借书登记</h4>
+                <h4 class="modal-title" id="borrowModalLabel{{ index }}">借书</h4>
             </div>
             <div class="modal-body">
                 <form class="form-entry" action="book_borrow" method="post">
                     <div class="form-group">
-                        <label for="form_borrow_book_id">图书ID</label>
-                        <input type="text" class="form-control" id="form_borrow_book_id" name="book_id" autocomplete="off" readonly>
+                        <label for="form_borrow_book_id{{ index }}">图书ID</label>
+                        <input type="text" class="form-control" id="form_borrow_book_id{{ index }}" name="book_id" autocomplete="off" readonly>
                     </div>
                     <div class="form-group dropdown">
-                        <label for="form_borrow_reader_id">读者</label>
-                        <input type="text" class="form-control" id="form_borrow_reader_id" name="reader_id" autocomplete="off" oninput="onFormBorrowReaderInput(this.value)" required>
+                        <label for="form_borrow_reader_id{{ index }}">读者</label>
+                        <input type="text" class="form-control" id="form_borrow_reader_id{{ index }}" name="reader_id" autocomplete="off" oninput="onFormBorrowReaderInput(this.value)" required>
                         <ul id="form_borrow_reader_menu{{ index }}" class="dropdown-menu" style="display:none"></ul>
                     </div>
                     <div class="form-group">
                         <label for="form_borrow_deadline">还书日期</label>
-                        <div class='input-group date' id='borrow_datetimepicker1'>
+                        <div class='input-group date' id="borrow_datetimepicker1{{ index }}">
                             <input type="text" class="form-control" id="form_borrow_deadline" name="deadline" autocomplete="off" required>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                         </div>
                     </div>
                     <script type="text/javascript">
                         $(function () {
-                            $('#borrow_datetimepicker1').datetimepicker({
+                            $('#borrow_datetimepicker1{{ index }}').datetimepicker({
                                 format: 'YYYY-MM-DD',
                                 locale: 'zh-cn',
                                 minDate: moment(),
@@ -125,7 +125,7 @@
 
     function onFormBorrowReaderMenuClick(value) {
         $form_borrow_reader_menu.css('display', 'none');
-        $('#form_borrow_reader_id').val(value.split(' ')[0]);
+        $('#form_borrow_reader_id{{ index }}').val(value.split(' ')[0]);
     }
 
     function operateFormatter(value, row, index) {
@@ -134,18 +134,18 @@
         if (row.status === '未借出') {
             html.push('<a class="borrow_book" href="javascript:void(0)" title="借书">借书</a>');
             html.push('<a class="remove_book" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>')
+        } else if (row.status === '已借出') {
+            html.push('<a class="return_book" href="javascript:void(0)" title="还书">还书</a>');
+        } else if (row.status === '已预约') {
+            html.push('<a class="borrow_reserved_book" href="javascript:void(0)" title="借书">借书</a>');
         }
-        // html = [
-        //     '<a class="edit_book" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>',
-        //     '<a class="remove_book" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>'
-        // ];
 
         return html.join(' ');
     }
 
     window.operateEvents = {
         'click .borrow_book': function (e, value, row, index) {
-            $('#form_borrow_book_id').val(row.id)
+            $('#form_borrow_book_id{{ index }}').val(row.id);
             $('#borrowModal{{ index }}').modal();
         },
         'click .remove_book': function(e, value, row, index) {
@@ -156,8 +156,22 @@
 
             $.ajax({
                 url: "delete_book?book_id=" + row.id,
-                method: "DELETE"
+                method: "DELETE",
+                success: function () {
+                    $('#table').bootstrapTable('refresh');
+                }
             });
+        },
+        'click .return_book': function(e, value, row, index) {
+            $.post('book_return', {book_id: row.id}, function () {
+                $('#table').bootstrapTable('refresh');
+            });
+        },
+        'click .borrow_reserved_book': function (e, value, row, index) {
+            $('#form_borrow_book_id{{ index }}').val(row.id);
+            $('#form_borrow_reader_id{{ index }}').val(row.reservation.reader_id);
+            $('#form_borrow_reader_id{{ index }}').prop('readonly', true);
+            $('#borrowModal{{ index }}').modal();
         }
     };
 

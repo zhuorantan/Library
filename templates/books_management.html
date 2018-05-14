@@ -81,7 +81,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="updateModalLabel">更新书目</h4>
+        <h4 class="modal-title" id="updateModalLabel">编辑书目</h4>
       </div>
       <div class="modal-body">
         <form class="form-entry" action="update_cip" method="post">
@@ -127,207 +127,280 @@
   </div>
 </div>
 
-  <script>
-      var $table = $('#table'),
-          $form_isbn_menu = $('#form_isbn_menu');
+<div class="modal fade" id="reserveModal" tabindex="-1" role="dialog" aria-labelledby="reserveModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="reserveModalLabel">预约</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-entry" action="book_reserve" method="post">
+          <div class="form-group">
+            <label for="form_reserve_isbn">ISBN</label>
+            <input type="text" class="form-control" id="form_reserve_isbn" name="isbn" autocomplete="off" readonly>
+          </div>
+          <div class="form-group dropdown">
+            <label for="form_reserve_reader_id">读者</label>
+            <input type="text" class="form-control" id="form_reserve_reader_id" name="reader_id" autocomplete="off" oninput="onFormReserveInput(this.value)" required>
+            <ul id="form_reserve_reader_menu" class="dropdown-menu" style="display:none"></ul>
+          </div>
+          <div class="form-group">
+            <label for="form_reserve_duration">期限</label>
+            <select class="form-control" id="form_reserve_duration" name="duration">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option selected="selected">7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+            </select>
+          </div>
 
-      $(function() {
-          $table.bootstrapTable({
-              url: 'cips',
-              idField: 'isbn',
-              detailView: true,
-              sortName: 'isbn',
-              toolbar: '#toolbar',
-              columns: [
-                  {
-                      title: 'ISBN',
-                      field: 'isbn',
-                      align: 'center',
-                      sortable: true,
-                      clickToSelect: false
-                  }, {
-                      field: 'book_name',
-                      title: '书名',
-                      sortable: true,
-                      align: 'center'
-                  },
-                  {
-                      field: 'author',
-                      title: '作者',
-                      sortable: true,
-                      align: 'center'
-                  },
-                  {
-                      field: 'publisher',
-                      title: '出版商',
-                      sortable: true,
-                      align: 'center'
-                  },
-                  {
-                      field: 'publish_date',
-                      title: '出版日期',
-                      sortable: true,
-                      align: 'center'
-                  },
-                  {
-                      field: 'book_ids',
-                      title: '可借 / 总册数',
-                      sortable: true,
-                      formatter: booksFormatter,
-                      align: 'center',
-                      searchFormatter: false
-                  },
-                  {
-                      field: 'librarian_name',
-                      title: '经办人',
-                      sortable: true,
-                      align: 'center'
-                  },
-                  {
-                      field: 'operate',
-                      title: '操作',
-                      align: 'center',
-                      events: operateEvents,
-                      formatter: operateFormatter
-                  }
-              ]
-          });
-          // sometimes footer render error.
-          setTimeout(function() {
-              $table.bootstrapTable('resetView');
-          }, 200);
-          $table.on('all.bs.table', function(e, name, args) {
-              console.log(name, args);
-          });
-          $table.on('click-cell.bs.table', function(e, field, value, row) {
-              if (['author', 'publisher', 'publish_date', 'librarian_name'].includes(field)) {
-                  $table.bootstrapTable('resetSearch', value);
-              }
-          });
-          $table.on('expand-row.bs.table', function(e, index, row, $detail) {
-              $.get( "{{ url_for('cip_books') }}?isbn=" + row.isbn + '&index=' + index.toString(), function( data ) {
-                  $detail.html(data);
-              });
-          });
-          $(window).resize(function() {
-              $table.bootstrapTable('resetView', {
-                  height: getHeight()
-              });
-          });
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary" >提交</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-      });
+<script>
+    var $table = $('#table'),
+        $form_isbn_menu = $('#form_isbn_menu'),
+        $form_reserve_reader_menu = $('#form_reserve_reader_menu');
 
-      function operateFormatter(value, row, index) {
-          var html = [];
+    $(function() {
+        $table.bootstrapTable({
+            url: 'cips',
+            idField: 'isbn',
+            detailView: true,
+            sortName: 'isbn',
+            toolbar: '#toolbar',
+            columns: [
+                {
+                    title: 'ISBN',
+                    field: 'isbn',
+                    align: 'center',
+                    sortable: true,
+                    clickToSelect: false
+                }, {
+                    field: 'book_name',
+                    title: '书名',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'author',
+                    title: '作者',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'publisher',
+                    title: '出版商',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'publish_date',
+                    title: '出版日期',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'book_ids',
+                    title: '可借 / 总册数',
+                    sortable: true,
+                    formatter: booksFormatter,
+                    align: 'center',
+                    searchFormatter: false
+                },
+                {
+                    field: 'librarian_name',
+                    title: '经办人',
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }
+            ]
+        });
+        // sometimes footer render error.
+        setTimeout(function() {
+            $table.bootstrapTable('resetView');
+        }, 200);
+        $table.on('all.bs.table', function(e, name, args) {
+            console.log(name, args);
+        });
+        $table.on('click-cell.bs.table', function(e, field, value, row) {
+            if (['author', 'publisher', 'publish_date', 'librarian_name'].includes(field)) {
+                $table.bootstrapTable('resetSearch', value);
+            }
+        });
+        $table.on('expand-row.bs.table', function(e, index, row, $detail) {
+            $.get( "{{ url_for('cip_books') }}?isbn=" + row.isbn + '&index=' + index.toString(), function( data ) {
+                $detail.html(data);
+            });
+        });
+        $(window).resize(function() {
+            $table.bootstrapTable('resetView', {
+                height: getHeight()
+            });
+        });
 
-          if (row.reservable) {
-              html.push('<a class="reserve" href="javascript:void(0)" title="预约">预约</a>')
-          }
+    });
 
-          html.push('<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>');
+    function operateFormatter(value, row, index) {
+        var html = [];
 
-          if (row.deletable) {
-              html.push('<a class="remove" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>')
-          }
+        if (row.reservable) {
+            html.push('<a class="reserve" href="javascript:void(0)" title="预约">预约</a>')
+        }
 
-          return html.join(' ');
-      }
+        html.push('<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>');
 
-      function onFormISBNInput(value) {
-          if (value.length > 0) {
-              $.get("{{ url_for('cips') }}?isbn_prefix=" + value, function (data) {
-                  var html = [];
-                  $.each(data, function (i, cip) {
-                      html.push('<li><a id="form_isbn_menu_' + i.toString() + '" onclick="onFormISBNMenuClick(this.text)">' + cip.isbn + ' ' + cip.book_name + '</a></li>');
-                  });
+        if (row.deletable) {
+            html.push('<a class="remove" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>')
+        }
 
-                  $form_isbn_menu.html(html.join(''));
-                  if (html.length > 0) {
-                      $form_isbn_menu.css('display', 'block');
-                  } else {
-                      $form_isbn_menu.css('display', 'none');
-                  }
+        return html.join(' ');
+    }
 
-                  if (data.length === 0){
-                      clearEntryForm()
-                  }
-              });
-          } else {
-              $form_isbn_menu.css('display', 'none');
-          }
-      }
+    function onFormISBNInput(value) {
+        if (value.length > 0) {
+            $.get("{{ url_for('cips') }}?isbn_prefix=" + value, function (data) {
+                var html = [];
+                $.each(data, function (i, cip) {
+                    html.push('<li><a id="form_isbn_menu_' + i.toString() + '" onclick="onFormISBNMenuClick(this.text)">' + cip.isbn + ' ' + cip.book_name + '</a></li>');
+                });
 
-      function onFormISBNMenuClick(value) {
-          $form_isbn_menu.css('display', 'none');
+                $form_isbn_menu.html(html.join(''));
+                if (html.length > 0) {
+                    $form_isbn_menu.css('display', 'block');
+                } else {
+                    $form_isbn_menu.css('display', 'none');
+                }
 
-          $.get("{{ url_for('cip') }}?isbn=" + value.split(' ')[0], function(data) {
-              fillEntryForm(data)
-              disableEntryEditing()
-          });
-      }
+                if (data.length === 0){
+                    clearEntryForm()
+                }
+            });
+        } else {
+            $form_isbn_menu.css('display', 'none');
+        }
+    }
 
-      function fillEntryForm(cip) {
-          $('#form_isbn').val(cip.isbn);
-          $('#form_book_name').val(cip.book_name);
-          $('#form_author').val(cip.author);
-          $('#form_publisher').val(cip.publisher);
-          $('#form_publish_date').val(cip.publish_date);
-      }
+    function onFormISBNMenuClick(value) {
+        $form_isbn_menu.css('display', 'none');
 
-      function disableEntryEditing() {
-          $('#form_book_name').prop('readonly', true);
-          $('#form_author').prop('readonly', true);
-          $('#form_publisher').prop('readonly', true);
-          $('#form_publish_date').prop('readonly', true);
-      }
+        $.get("{{ url_for('cip') }}?isbn=" + value.split(' ')[0], function(data) {
+            fillEntryForm(data)
+            disableEntryEditing()
+        });
+    }
 
-      function clearEntryForm() {
-          $('#form_book_name').val('');
-          $('#form_author').val('');
-          $('#form_publisher').val('');
-          $('#form_publish_date').val('');
-          $('#form_book_name').prop('readonly', false);
-          $('#form_author').prop('readonly', false);
-          $('#form_publisher').prop('readonly', false);
-          $('#form_publish_date').prop('readonly', false);
-      }
+    function onFormReserveInput(value) {
+        if (value.length > 0) {
+            $.get("{{ url_for('readers') }}?query_text=" + value, function (data) {
+                var html = [];
+                $.each(data, function (i, reader) {
+                    html.push('<li><a id="form_reserve_menu_' + i.toString() + '" onclick="onFormReserveMenuClick(this.text)">' + reader.id + ' ' + reader.name + '</a></li>');
+                });
 
-      window.operateEvents = {
-          'click .reserve': function (e, value, row, index) {
+                $form_reserve_reader_menu.html(html.join(''));
+                if (html.length > 0) {
+                    $form_reserve_reader_menu.css('display', 'block');
+                } else {
+                    $form_reserve_reader_menu.css('display', 'none');
+                }
 
-          },
-          'click .edit': function (e, value, row, index) {
-              $('#form_update_isbn').val(row.isbn);
-              $('#form_update_book_name').val(row.book_name);
-              $('#form_update_author').val(row.author);
-              $('#form_update_publisher').val(row.publisher);
-              $('#form_update_publish_date').val(row.publish_date);
 
-              $('#updateModal').modal();
-          },
-          'click .remove': function(e, value, row, index) {
-              $table.bootstrapTable('remove', {
-                  field: 'isbn',
-                  values: [row.isbn]
-              });
+            });
+        } else {
+            $form_reserve_reader_menu.css('display', 'none');
+        }
+    }
 
-              $.ajax({
-                  url: "delete_cip?isbn=" + row.isbn,
-                  method: "DELETE"
-              });
-          }
-      };
+    function onFormReserveMenuClick(value) {
+        $form_reserve_reader_menu.css('display', 'none');
+        $('#form_reserve_reader_id').val(value.split(' ')[0]);
+    }
 
-      function booksFormatter(data, row) {
-          if (data === '') {
-              return '0 / 0';
-          }
+    function fillEntryForm(cip) {
+        $('#form_isbn').val(cip.isbn);
+        $('#form_book_name').val(cip.book_name);
+        $('#form_author').val(cip.author);
+        $('#form_publisher').val(cip.publisher);
+        $('#form_publish_date').val(cip.publish_date);
+    }
 
-          return row.available_count.toString() + ' / ' + data.split(';').length;
-      }
+    function disableEntryEditing() {
+        $('#form_book_name').prop('readonly', true);
+        $('#form_author').prop('readonly', true);
+        $('#form_publisher').prop('readonly', true);
+        $('#form_publish_date').prop('readonly', true);
+    }
 
-      function getHeight() {
-          return $(window).height() - $('h1').outerHeight(true);
-      }
-  </script>
-  {% endblock %}
+    function clearEntryForm() {
+        $('#form_book_name').val('');
+        $('#form_author').val('');
+        $('#form_publisher').val('');
+        $('#form_publish_date').val('');
+        $('#form_book_name').prop('readonly', false);
+        $('#form_author').prop('readonly', false);
+        $('#form_publisher').prop('readonly', false);
+        $('#form_publish_date').prop('readonly', false);
+    }
+
+    window.operateEvents = {
+        'click .reserve': function (e, value, row, index) {
+            $('#form_reserve_isbn').val(row.isbn);
+            $('#reserveModal').modal();
+        },
+        'click .edit': function (e, value, row, index) {
+            $('#form_update_isbn').val(row.isbn);
+            $('#form_update_book_name').val(row.book_name);
+            $('#form_update_author').val(row.author);
+            $('#form_update_publisher').val(row.publisher);
+            $('#form_update_publish_date').val(row.publish_date);
+
+            $('#updateModal').modal();
+        },
+        'click .remove': function(e, value, row, index) {
+            $table.bootstrapTable('remove', {
+                field: 'isbn',
+                values: [row.isbn]
+            });
+
+            $.ajax({
+                url: "delete_cip?isbn=" + row.isbn,
+                method: "DELETE"
+            });
+        }
+    };
+
+    function booksFormatter(data, row) {
+        if (data === '') {
+            return '0 / 0';
+        }
+
+        return row.available_count.toString() + ' / ' + data.split(';').length;
+    }
+
+    function getHeight() {
+        return $(window).height() - $('h1').outerHeight(true);
+    }
+</script>
+{% endblock %}

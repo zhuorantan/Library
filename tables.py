@@ -127,15 +127,21 @@ class Book(Base):
     cip = relationship('CIP', back_populates='books')
     librarian = relationship('Librarian', back_populates='books')
     borrows = relationship('Borrow', back_populates='book')
+    reservation = relationship('Reservation', back_populates='book', uselist=False)
 
     def properties(self):
-        return {
+        properties = {
             'id': self.id,
             'cip_id': self.cip_id,
             'location': self.location,
             'status': self.status.name(),
             'librarian_name': self.librarian.name
         }
+
+        if self.reservation:
+            properties['reservation'] = self.reservation.properties()
+
+        return properties
 
 
 class Borrow(Base):
@@ -169,16 +175,18 @@ class Reservation(Base):
 
     reader_id = Column(String(30), ForeignKey('user.id'), primary_key=True)
     cip_id = Column(String(30), ForeignKey('cip.isbn'), primary_key=True)
+    book_id = Column(String(30), ForeignKey('book.id'))
     reserve_date = Column(Date, primary_key=True)
-    reserve_deadline = Column(Date)
+    duration = Column(Integer)
 
     reader = relationship('Reader', back_populates='reservations')
     cip = relationship('CIP', back_populates='reservations')
+    book = relationship('Book', back_populates='reservation')
 
     def properties(self):
         return {
             'reader_id': self.reader_id,
             'cip_id': self.cip_id,
             'reserve_date': self.reserve_date.isoformat(),
-            'reserve_deadline': self.reserve_deadline.isoformat()
+            'duration': self.duration
         }

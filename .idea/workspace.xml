@@ -16,15 +16,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Library$Unnamed.coverage" NAME="Library Coverage Results" MODIFIED="1526271588951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Library$Unnamed.coverage" NAME="Library Coverage Results" MODIFIED="1526295816983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="545">
-              <caret line="259" selection-start-line="259" selection-end-line="259" />
+            <state relative-caret-position="126">
+              <caret line="325" column="40" lean-forward="true" selection-start-line="325" selection-start-column="40" selection-end-line="325" selection-end-column="40" />
               <folding>
                 <element signature="e#0#77#0" expanded="true" />
               </folding>
@@ -35,17 +35,17 @@
       <file leaf-file-name="functions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/functions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
+            <state relative-caret-position="-153">
               <caret line="25" column="4" lean-forward="true" selection-start-line="25" selection-start-column="4" selection-end-line="33" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cip_books.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cip_books.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/cip_books.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
+            <state relative-caret-position="297">
+              <caret line="167" column="15" lean-forward="true" selection-start-line="167" selection-start-column="15" selection-end-line="167" selection-end-column="15" />
               <folding>
                 <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -53,15 +53,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="books_management.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="books_management.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/books_management.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="415">
-              <caret line="173" column="33" selection-start-line="173" selection-start-column="33" selection-end-line="173" selection-end-column="33" />
+            <state relative-caret-position="199">
+              <caret line="349" column="28" selection-start-line="349" selection-start-column="28" selection-end-line="349" selection-end-column="52" />
               <folding>
                 <element signature="e#636#643#1" expanded="true" />
                 <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
                 <element signature="e#3661#3668#1" expanded="true" />
+                <element signature="n#style#0;n#ul#0;n#div#1;n#form#0;n#div#1;n#div#0;n#div#0;n#div#3;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -70,8 +71,8 @@
       <file leaf-file-name="tables.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tables.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="113" column="40" selection-start-line="113" selection-start-column="40" selection-end-line="113" selection-end-column="40" />
+            <state relative-caret-position="226">
+              <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
               <folding>
                 <element signature="e#0#101#0" expanded="true" />
               </folding>
@@ -113,8 +114,12 @@
       <find>console.log</find>
       <find>get</find>
       <find>post</find>
-      <find>for</find>
       <find>id</find>
+      <find>delete</find>
+      <find>for</find>
+      <find>$.post</find>
+      <find>integer</find>
+      <find>readonly</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -133,10 +138,10 @@
         <option value="$PROJECT_DIR$/templates/base.html" />
         <option value="$PROJECT_DIR$/templates/book_borrow_readers.html" />
         <option value="$PROJECT_DIR$/templates/readers_borrow.html" />
-        <option value="$PROJECT_DIR$/templates/cip_books.html" />
+        <option value="$PROJECT_DIR$/templates/books_management.html" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/tables.py" />
-        <option value="$PROJECT_DIR$/templates/books_management.html" />
+        <option value="$PROJECT_DIR$/templates/cip_books.html" />
       </list>
     </option>
   </component>
@@ -421,15 +426,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
+        <state relative-caret-position="-153">
           <caret line="25" column="4" lean-forward="true" selection-start-line="25" selection-start-column="4" selection-end-line="33" selection-end-column="20" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="545">
-          <caret line="259" selection-start-line="259" selection-end-line="259" />
+        <state relative-caret-position="126">
+          <caret line="325" column="40" lean-forward="true" selection-start-line="325" selection-start-column="40" selection-end-line="325" selection-end-column="40" />
           <folding>
             <element signature="e#0#77#0" expanded="true" />
           </folding>
@@ -438,32 +443,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="113" column="40" selection-start-line="113" selection-start-column="40" selection-end-line="113" selection-end-column="40" />
+        <state relative-caret-position="226">
+          <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
           <folding>
             <element signature="e#0#101#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/cip_books.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
-          <folding>
-            <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/books_management.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="173" column="33" selection-start-line="173" selection-start-column="33" selection-end-line="173" selection-end-column="33" />
+        <state relative-caret-position="199">
+          <caret line="349" column="28" selection-start-line="349" selection-start-column="28" selection-end-line="349" selection-end-column="52" />
           <folding>
             <element signature="e#636#643#1" expanded="true" />
             <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
             <element signature="e#3661#3668#1" expanded="true" />
+            <element signature="n#style#0;n#ul#0;n#div#1;n#form#0;n#div#1;n#div#0;n#div#0;n#div#3;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/cip_books.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="167" column="15" lean-forward="true" selection-start-line="167" selection-start-column="15" selection-end-line="167" selection-end-column="15" />
+          <folding>
+            <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
