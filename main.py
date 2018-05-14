@@ -194,7 +194,7 @@ def load_user(user_id):
 def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return redirect(url_for('books_management'))
+            return render_template('books_management.html', book_locations=['图书流通室', '图书阅览室'])
         else:
             return render_template('login.html')
     if request.method == 'POST':
@@ -221,18 +221,6 @@ def logout():
     logout_user()
     db_session.commit()
     return redirect('/')
-
-
-@app.route('/books_management', methods=['GET'])
-@login_required
-def books_management():
-    nav_items = [
-        {'name': '图书管理', 'active': True},
-        {'name': '借书管理', 'link': 'borrow'},
-        {'name': '预约管理', 'link': 'reserve'},
-        {'name': '还书管理', 'link': 'return'}
-    ]
-    return render_template('books_management.html', nav_items=nav_items, book_locations=['图书流通室', '图书阅览室'])
 
 
 @app.route('/cip_books')
@@ -311,6 +299,15 @@ def reservation_info():
     book = Book.query.get(book_id)
 
     return jsonify(book.reservation.properties())
+
+
+@app.route('/librarian_info', methods=['GET'])
+@login_required
+def librarian_info():
+    user_id = request.args['user_id']
+    librarian = Librarian.query.get(user_id)
+
+    return jsonify(librarian.properties())
 
 
 @app.route('/book_entry', methods=['POST'])

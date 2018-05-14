@@ -66,6 +66,8 @@ class Reader(User):
     tel = Column(String(30))
     email = Column(String(30))
 
+    is_active = False
+
     borrows = relationship('Borrow', back_populates='reader')
     reservations = relationship('Reservation', back_populates='reader')
 
@@ -109,7 +111,7 @@ class CIP(Base):
             'publish_date': self.publish_year_month.strftime('%Y-%m'),
             'books': [book.properties() for book in self.books],
             'book_ids': ';'.join(book.id for book in self.books),
-            'librarian_name': self.librarian.name,
+            'librarian': self.librarian.properties(),
             'available_count': len([book for book in self.books if book.status == BookStatus.available])
         }
 

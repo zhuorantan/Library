@@ -171,6 +171,31 @@
   </div>
 </div>
 
+<div class="modal fade" id="librarianModal" tabindex="-1" role="dialog" aria-labelledby="librarianModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="librarianModalLabel">管理员信息</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tbody>
+          <tr>
+            <th class="text-right">工号</th>
+            <td id="librarian_id"></td>
+          </tr>
+          <tr>
+            <th class="text-right">姓名</th>
+            <td id="librarian_name"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     var $table = $('#table'),
         $form_isbn_menu = $('#form_isbn_menu'),
@@ -183,6 +208,7 @@
             detailView: true,
             sortName: 'isbn',
             toolbar: '#toolbar',
+            pageSize: 25,
             columns: [
                 {
                     title: 'ISBN',
@@ -224,10 +250,12 @@
                     searchFormatter: false
                 },
                 {
-                    field: 'librarian_name',
+                    field: 'librarian.name',
                     title: '经办人',
                     sortable: true,
-                    align: 'center'
+                    align: 'center',
+                    events: librarianEvents,
+                    formatter: librarianFormatter
                 },
                 {
                     field: 'operate',
@@ -246,7 +274,7 @@
             console.log(name, args);
         });
         $table.on('click-cell.bs.table', function(e, field, value, row) {
-            if (['author', 'publisher', 'publish_date', 'librarian_name'].includes(field)) {
+            if (['author', 'publisher', 'publish_date'].includes(field)) {
                 $table.bootstrapTable('resetSearch', value);
             }
         });
@@ -261,6 +289,7 @@
             });
         });
 
+        $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
     });
 
     function operateFormatter(value, row, index) {
@@ -392,6 +421,17 @@
         }
     };
 
+    window.librarianEvents = {
+        'click .librarian_info': function(e, value, row, index) {
+            $.get('librarian_info?user_id=' + row.librarian.id, function (data) {
+                $('#librarian_id').html(data.id);
+                $('#librarian_name').html(data.name);
+
+                $('#librarianModal').modal();
+            });
+        }
+    };
+
     function booksFormatter(data, row) {
         if (data === '') {
             return '0 / 0';
@@ -402,6 +442,10 @@
 
     function publishDateFormatter(data, row) {
         return moment(data).format('YYYY 年 M 月')
+    }
+
+    function librarianFormatter(value, row) {
+        return '<a class="librarian_info" href="javascript:void(0)" title="' + value + '">' + value + '</a>';
     }
 
     function getHeight() {

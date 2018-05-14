@@ -35,15 +35,6 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                {% for nav_item in nav_items %}
-                    {% if nav_item.active %}
-                        <li class="active"><a href="#">{{ nav_item.name }}<span class="sr-only">(current)</span></a></li>
-                    {% else %}
-                        <li><a href="{{ nav_item.link }}">{{ nav_item.name }}</a></li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <p class="navbar-text">欢迎你，{{ current_user.name }}</p>
                 <li><a href="{{ url_for('logout') }}">登出</a></li>
@@ -75,6 +66,7 @@
 <script src="{{ url_for('static', filename='js/bootstrap-table.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-datetimepicker.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/zh-cn.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.js') }}"></script>
 
 {% block content %}{% endblock %}
 
