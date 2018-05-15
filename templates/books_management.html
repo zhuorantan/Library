@@ -6,202 +6,208 @@
 
 {% block toolbar %}
 <div id="toolbar">
-  <button id="entry" class="btn btn-primary" data-toggle="modal" data-target="#entryModel">
-    <i class="glyphicon glyphicon-plus-sign"></i> 入库
-  </button>
+    <button id="entry" class="btn btn-primary" data-toggle="modal" data-target="#entryModel">
+        <i class="glyphicon glyphicon-plus-sign"></i> 入库
+    </button>
+</div>
+<div class="alert alert-success" id="reserve_success_alsert" role="alert">预约成功</div>
+<div class="alert alert-danger" id="borrow_failure_alert" role="alert"><strong>借书失败</strong>，超过最大借书数量</div>
+<div class="alert alert-warning alert-dismissible" id="return_delay_alert" role="alert">
+  <button type="button" class="close" onclick="$('#return_delay_alert').hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>还书超期 <span id="return_delay_days"></span> 天</strong>
 </div>
 {% endblock %}
 
 {% block content %}
 <!-- Modal -->
 <div class="modal fade" id="entryModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">入库</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-entry" action="book_entry" method="post">
-          <div class="form-group dropdown">
-            <label for="form_isbn">ISBN</label>
-            <input type="text" class="form-control" id="form_isbn" name="isbn" autocomplete="off" oninput="onFormISBNInput(this.value)" required>
-            <ul id="form_isbn_menu" class="dropdown-menu" style="display:none"></ul>
-          </div>
-          <div class="form-group">
-            <label for="form_book_name">书名</label>
-            <input type="text" class="form-control" id="form_book_name" name="book_name" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_author">作者</label>
-            <input type="text" class="form-control" id="form_author" name="author" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_publisher">出版商</label>
-            <input type="text" class="form-control" id="form_publisher" name="publisher" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_publish_date">出版日期</label>
-            <div class='input-group date' id='datetimepicker1'>
-              <input type="text" class="form-control" id="form_publish_date" name="publish_date" autocomplete="off" required>
-              <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">入库</h4>
             </div>
-          </div>
-          <script type="text/javascript">
-              $(function () {
-                  $('#datetimepicker1').datetimepicker({
-                      format: 'YYYY-MM',
-                      locale: 'zh-cn',
-                      maxDate: moment()
-                  });
-              });
-          </script>
-          <div class="form-group library-book-form-group">
-            <label for="form_book_id_0">图书ID</label>
-            <div class="input-group">
-              <input type="text" class="form-control" id="form_book_id_0" name="book_id" autocomplete="off" required>
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button" onclick="onFormEntryAdd($(this))"><span class="glyphicon glyphicon-plus"></span></button>
-              </span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="form_location">存放位置</label>
-            <select class="form-control" id="form_location" name="location">
-              {% for book_location in book_locations %}
-              <option>{{ book_location }}</option>
-              {% endfor %}
-            </select>
-          </div>
+            <div class="modal-body">
+                <form class="form-entry" id="form_entry" action="book_entry" method="post">
+                    <div class="form-group dropdown">
+                        <label for="form_isbn">ISBN</label>
+                        <input type="text" class="form-control" id="form_isbn" name="isbn" autocomplete="off" oninput="onFormISBNInput(this.value)" required>
+                        <ul id="form_isbn_menu" class="dropdown-menu" style="display:none"></ul>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_book_name">书名</label>
+                        <input type="text" class="form-control" id="form_book_name" name="book_name" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_author">作者</label>
+                        <input type="text" class="form-control" id="form_author" name="author" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_publisher">出版商</label>
+                        <input type="text" class="form-control" id="form_publisher" name="publisher" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_publish_date">出版日期</label>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type="text" class="form-control" id="form_publish_date" name="publish_date" autocomplete="off" required>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#datetimepicker1').datetimepicker({
+                                format: 'YYYY-MM',
+                                locale: 'zh-cn',
+                                maxDate: moment()
+                            });
+                        });
+                    </script>
+                    <div class="form-group library-book-form-group">
+                        <label for="form_book_id_0">图书ID</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="form_book_id_0" name="book_id" autocomplete="off" required>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" onclick="onFormEntryAdd($(this))"><span class="glyphicon glyphicon-plus"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_location">存放位置</label>
+                        <select class="form-control" id="form_location" name="location">
+                            {% for book_location in book_locations %}
+                            <option>{{ book_location }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-primary" >提交</button>
-          </div>
-        </form>
-      </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="updateModalLabel">编辑书目</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-entry" action="update_cip" method="post">
-          <div class="form-group">
-            <label for="form_update_isbn">ISBN</label>
-            <input type="text" class="form-control" id="form_update_isbn" name="isbn" autocomplete="off" oninput="onFormISBNInput(this.value)" readonly>
-          </div>
-          <div class="form-group">
-            <label for="form_update_book_name">书名</label>
-            <input type="text" class="form-control" id="form_update_book_name" name="book_name" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_update_author">作者</label>
-            <input type="text" class="form-control" id="form_update_author" name="author" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_update_publisher">出版商</label>
-            <input type="text" class="form-control" id="form_update_publisher" name="publisher" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label for="form_update_publish_date">出版日期</label>
-            <div class='input-group date' id='datetimepicker2'>
-              <input type="text" class="form-control" id="form_update_publish_date" name="publish_date" autocomplete="off" required>
-              <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="updateModalLabel">编辑书目</h4>
             </div>
-          </div>
-          <script type="text/javascript">
-              $(function () {
-                  $('#datetimepicker2').datetimepicker({
-                      format: 'YYYY-MM',
-                      locale: 'zh-cn'
-                  });
-              });
-          </script>
+            <div class="modal-body">
+                <form class="form-update" id="form_update" action="update_cip" method="post">
+                    <div class="form-group">
+                        <label for="form_update_isbn">ISBN</label>
+                        <input type="text" class="form-control" id="form_update_isbn" name="isbn" autocomplete="off" oninput="onFormISBNInput(this.value)" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_update_book_name">书名</label>
+                        <input type="text" class="form-control" id="form_update_book_name" name="book_name" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_update_author">作者</label>
+                        <input type="text" class="form-control" id="form_update_author" name="author" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_update_publisher">出版商</label>
+                        <input type="text" class="form-control" id="form_update_publisher" name="publisher" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_update_publish_date">出版日期</label>
+                        <div class='input-group date' id='datetimepicker2'>
+                            <input type="text" class="form-control" id="form_update_publish_date" name="publish_date" autocomplete="off" required>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#datetimepicker2').datetimepicker({
+                                format: 'YYYY-MM',
+                                locale: 'zh-cn'
+                            });
+                        });
+                    </script>
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-primary" >提交</button>
-          </div>
-        </form>
-      </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="reserveModal" tabindex="-1" role="dialog" aria-labelledby="reserveModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="reserveModalLabel">预约</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-entry" action="book_reserve" method="post">
-          <div class="form-group">
-            <label for="form_reserve_isbn">ISBN</label>
-            <input type="text" class="form-control" id="form_reserve_isbn" name="isbn" autocomplete="off" readonly>
-          </div>
-          <div class="form-group dropdown">
-            <label for="form_reserve_reader_id">读者</label>
-            <input type="text" class="form-control" id="form_reserve_reader_id" name="reader_id" autocomplete="off" oninput="onFormReserveInput(this.value)" required>
-            <ul id="form_reserve_reader_menu" class="dropdown-menu" style="display:none"></ul>
-          </div>
-          <div class="form-group">
-            <label for="form_reserve_duration">期限</label>
-            <select class="form-control" id="form_reserve_duration" name="duration">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option selected="selected">7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-            </select>
-          </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="reserveModalLabel">预约</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-reserve" id="form_reserve" action="book_reserve" method="post">
+                    <div class="form-group">
+                        <label for="form_reserve_isbn">ISBN</label>
+                        <input type="text" class="form-control" id="form_reserve_isbn" name="isbn" autocomplete="off" readonly>
+                    </div>
+                    <div class="form-group dropdown">
+                        <label for="form_reserve_reader_id">读者</label>
+                        <input type="text" class="form-control" id="form_reserve_reader_id" name="reader_id" autocomplete="off" oninput="onFormReserveInput(this.value)" required>
+                        <ul id="form_reserve_reader_menu" class="dropdown-menu" style="display:none"></ul>
+                    </div>
+                    <div class="form-group">
+                        <label for="form_reserve_duration">期限</label>
+                        <select class="form-control" id="form_reserve_duration" name="duration">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option selected="selected">7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                    </div>
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-primary" >提交</button>
-          </div>
-        </form>
-      </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="librarianModal" tabindex="-1" role="dialog" aria-labelledby="librarianModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="librarianModalLabel">管理员信息</h4>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered">
-          <tbody>
-          <tr>
-            <th class="text-right">工号</th>
-            <td id="librarian_id"></td>
-          </tr>
-          <tr>
-            <th class="text-right">姓名</th>
-            <td id="librarian_name"></td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="librarianModalLabel">管理员信息</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th class="text-right">工号</th>
+                        <td id="librarian_id"></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">姓名</th>
+                        <td id="librarian_name"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
@@ -216,7 +222,6 @@
             detailView: true,
             sortName: 'isbn',
             toolbar: '#toolbar',
-            pageSize: 25,
             columns: [
                 {
                     title: 'ISBN',
@@ -295,6 +300,45 @@
             $table.bootstrapTable('resetView', {
                 height: getHeight()
             });
+        });
+
+        $('#reserve_success_alsert').hide();
+        $('#borrow_failure_alert').hide();
+        $('#return_delay_alert').hide();
+
+        $('#form_entry').submit(function(e) {
+            e.preventDefault();
+            var data = $('#form_entry').serialize();
+            $.post('book_entry', data, function () {
+                $('#entryModal').modal('hide');
+                $table.bootstrapTable('refresh');
+            });
+
+            return true;
+        });
+
+        $('#form_update').submit(function(e) {
+            e.preventDefault();
+            var data = $('#form_update').serialize();
+            $.post('update_cip', data, function () {
+                $('#updateModal').modal('hide');
+                $table.bootstrapTable('refresh');
+            });
+
+            return true;
+        });
+
+        $('#form_reserve').submit(function(e) {
+            e.preventDefault();
+            var data = $('#form_reserve').serialize();
+            $.post('book_reserve', data, function () {
+                $('#reserveModal').modal('hide');
+                $("#reserve_success_alsert").fadeTo(2000, 500).slideUp(500, function(){
+                    $("#reserve_success_alsert").slideUp(500);
+                });
+            });
+
+            return true;
         });
 
         $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
@@ -414,11 +458,11 @@
 
     function onUserNameClick() {
         $.get('librarian_info?user_id={{ current_user.id }}', function (data) {
-                $('#librarian_id').html(data.id);
-                $('#librarian_name').html(data.name);
+            $('#librarian_id').html(data.id);
+            $('#librarian_name').html(data.name);
 
-                $('#librarianModal').modal();
-            });
+            $('#librarianModal').modal();
+        });
     }
 
     function fillEntryForm(cip) {

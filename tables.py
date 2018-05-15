@@ -96,8 +96,8 @@ class CIP(Base):
     librarian_id = Column(String(30), ForeignKey('user.id'))
 
     librarian = relationship('Librarian', back_populates='cips')
-    books = relationship('Book', back_populates='cip')
-    reservations = relationship('Reservation', back_populates='cip')
+    books = relationship('Book', back_populates='cip', cascade="all, delete-orphan")
+    reservations = relationship('Reservation', back_populates='cip', cascade="all, delete-orphan")
 
     def books_num(self):
         return len(self.books)
@@ -127,8 +127,8 @@ class Book(Base):
 
     cip = relationship('CIP', back_populates='books')
     librarian = relationship('Librarian', back_populates='books')
-    borrows = relationship('Borrow', back_populates='book')
-    reservation = relationship('Reservation', back_populates='book', uselist=False)
+    borrows = relationship('Borrow', back_populates='book', cascade="all, delete-orphan")
+    reservation = relationship('Reservation', back_populates='book', uselist=False, cascade="all, delete-orphan")
 
     def properties(self):
         properties = {

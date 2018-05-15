@@ -8,7 +8,7 @@
                 <h4 class="modal-title" id="borrowModalLabel{{ index }}">借书</h4>
             </div>
             <div class="modal-body">
-                <form class="form-entry" action="book_borrow" method="post">
+                <form class="form-borrow" id="form_borrow{{ index }}" action="book_borrow" method="post">
                     <div class="form-group">
                         <label for="form_borrow_book_id{{ index }}">图书ID</label>
                         <input type="text" class="form-control" id="form_borrow_book_id{{ index }}" name="book_id" autocomplete="off" readonly>
@@ -187,6 +187,23 @@
                 height: getHeight()
             });
         });
+
+        $('#form_borrow{{ index }}').submit(function(e) {
+            e.preventDefault();
+            var data = $('#form_borrow{{ index }}').serialize();
+            $.post('book_borrow', data, function (data) {
+                $('#borrowModal{{ index }}').modal('hide');
+                if (data.success) {
+                    $table.bootstrapTable('refresh');
+                } else {
+                    $('#borrow_failure_alert').fadeTo(2000, 500).slideUp(500, function(){
+                        $('#borrow_failure_alert').slideUp(500);
+                    });
+                }
+            });
+
+            return true;
+        });
     });
 
     function onFormBorrowReaderInput(value) {
@@ -289,8 +306,14 @@
             });
         },
         'click .return_book': function(e, value, row, index) {
-            $.post('book_return', {book_id: row.id}, function () {
+            $.post('book_return', {book_id: row.id}, function (data) {
                 $('#table').bootstrapTable('refresh');
+
+                if (data.hasOwnProperty('delay')) {
+                    console.log(data.delay);
+                    $('#return_delay_days').html(data.delay);
+                    $('#return_delay_alert').show();
+                }
             });
         },
         'click .borrow_reserved_book': function (e, value, row, index) {
