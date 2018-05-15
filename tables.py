@@ -178,6 +178,7 @@ class Reservation(Base):
     cip_id = Column(String(30), ForeignKey('cip.isbn'), primary_key=True)
     book_id = Column(String(30), ForeignKey('book.id'))
     reserve_date = Column(Date, primary_key=True)
+    available_date = Column(Date)
     duration = Column(Integer)
 
     reader = relationship('Reader', back_populates='reservations')
@@ -185,9 +186,14 @@ class Reservation(Base):
     book = relationship('Book', back_populates='reservation')
 
     def properties(self):
-        return {
+        properties = {
             'cip_id': self.cip_id,
             'reserve_date': self.reserve_date.isoformat(),
             'duration': self.duration,
             'reader': self.reader.properties()
         }
+
+        if self.available_date:
+            properties['available_date'] = self.available_date.isoformat()
+
+        return properties

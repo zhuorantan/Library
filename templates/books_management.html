@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}入库管理{% endblock %}
+{% block user_name %}
+<a class="librarian_info" href="javascript:void(0)" title="{{ super() }}" onclick="onUserNameClick()">{{ super() }}</a>
+{% endblock %}
 
 {% block toolbar %}
 <div id="toolbar">
@@ -53,9 +56,14 @@
                   });
               });
           </script>
-          <div class="form-group">
-            <label for="form_book_id">图书ID</label>
-            <input type="text" class="form-control" id="form_book_id" name="book_id" autocomplete="off" required>
+          <div class="form-group library-book-form-group">
+            <label for="form_book_id_0">图书ID</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="form_book_id_0" name="book_id" autocomplete="off" required>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" onclick="onFormEntryAdd($(this))"><span class="glyphicon glyphicon-plus"></span></button>
+              </span>
+            </div>
           </div>
           <div class="form-group">
             <label for="form_location">存放位置</label>
@@ -341,6 +349,42 @@
         });
     }
 
+    function onFormEntryAdd(e) {
+        var $last = e.parent().parent().parent();
+
+        while ($last.next().hasClass('library-book-form-group')) {
+            $last = $last.next();
+        }
+
+        var $input = $last.find('input')[0];
+        var id = $input.id;
+        var id_elements = id.split('_');
+        var index = parseInt(id_elements[id_elements.length - 1]) + 1;
+
+        $last.after('<div class="form-group library-book-form-group">\
+               <div class="input-group">\
+                 <input type="text" class="form-control" id="form_book_id_' + index.toString() + '" name="book_id" autocomplete="off" required>\
+                 <span class="input-group-btn">\
+                   <button class="btn btn-default" type="button" onclick="onFormEntryRemove($(this))"><span class="glyphicon glyphicon-minus"></span></button>\
+                 </span>\
+               </div>\
+             </div>');
+
+        var value = $input.value;
+        var value_elements = value.split('.');
+        var last_element = parseInt(value_elements[value_elements.length - 1]) + 1;
+
+        if (last_element) {
+            value_elements[value_elements.length - 1] = last_element;
+            var new_value = value_elements.join('.');
+            $('#form_book_id_' + index.toString()).val(new_value);
+        }
+    }
+
+    function onFormEntryRemove(e) {
+        e.parent().parent().parent().remove();
+    }
+
     function onFormReserveInput(value) {
         if (value.length > 0) {
             $.get("{{ url_for('readers') }}?query_text=" + value, function (data) {
@@ -366,6 +410,15 @@
     function onFormReserveMenuClick(value) {
         $form_reserve_reader_menu.css('display', 'none');
         $('#form_reserve_reader_id').val(value.split(' ')[0]);
+    }
+
+    function onUserNameClick() {
+        $.get('librarian_info?user_id={{ current_user.id }}', function (data) {
+                $('#librarian_id').html(data.id);
+                $('#librarian_name').html(data.name);
+
+                $('#librarianModal').modal();
+            });
     }
 
     function fillEntryForm(cip) {

@@ -7,6 +7,7 @@
       <change beforePath="$PROJECT_DIR$/tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/tables.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/books_management.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/books_management.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/cip_books.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/cip_books.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,15 +17,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Library$Unnamed.coverage" NAME="Library Coverage Results" MODIFIED="1526295816983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Library$Unnamed.coverage" NAME="Library Coverage Results" MODIFIED="1526344015655" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="310" lean-forward="true" selection-start-line="310" selection-end-line="310" />
+            <state relative-caret-position="451">
+              <caret line="332" lean-forward="true" selection-start-line="332" selection-end-line="332" />
               <folding>
                 <element signature="e#0#77#0" expanded="true" />
               </folding>
@@ -35,8 +36,8 @@
       <file leaf-file-name="cip_books.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/cip_books.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="263" lean-forward="true" selection-start-line="263" selection-end-line="263" />
+            <state relative-caret-position="419">
+              <caret line="260" column="123" selection-start-line="260" selection-start-column="123" selection-end-line="260" selection-end-column="123" />
               <folding>
                 <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -44,11 +45,20 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/base.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="38" column="63" selection-start-line="38" selection-start-column="63" selection-end-line="38" selection-end-column="63" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="books_management.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/books_management.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="424" column="65" selection-start-line="424" selection-start-column="65" selection-end-line="424" selection-end-column="65" />
+            <state relative-caret-position="45">
+              <caret line="3" column="119" selection-start-line="3" selection-start-column="119" selection-end-line="3" selection-end-column="119" />
               <folding>
                 <element signature="e#636#643#1" expanded="true" />
                 <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
@@ -62,8 +72,8 @@
       <file leaf-file-name="tables.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tables.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="113" column="52" selection-start-line="113" selection-start-column="52" selection-end-line="113" selection-end-column="52" />
+            <state relative-caret-position="514">
+              <caret line="196" column="74" selection-start-line="196" selection-start-column="74" selection-end-line="196" selection-end-column="74" />
               <folding>
                 <element signature="e#0#101#0" expanded="true" />
               </folding>
@@ -83,9 +93,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>email</find>
-      <find>db_session</find>
-      <find>bootstrap-table</find>
       <find>remove</find>
       <find>editable</find>
       <find>selection</find>
@@ -111,8 +118,11 @@
       <find>get</find>
       <find>locale</find>
       <find>console.log</find>
+      <find>button</find>
       <find>borrows</find>
+      <find>add_all</find>
       <find>prop</find>
+      <find>click</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -130,10 +140,10 @@
         <option value="$PROJECT_DIR$/templates/book_entry.html" />
         <option value="$PROJECT_DIR$/templates/book_borrow_readers.html" />
         <option value="$PROJECT_DIR$/templates/readers_borrow.html" />
-        <option value="$PROJECT_DIR$/templates/cip_books.html" />
-        <option value="$PROJECT_DIR$/templates/base.html" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/tables.py" />
+        <option value="$PROJECT_DIR$/templates/cip_books.html" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/templates/base.html" />
         <option value="$PROJECT_DIR$/templates/books_management.html" />
       </list>
     </option>
@@ -244,13 +254,13 @@
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32865733" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32865733" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24345239" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24345239" />
       <window_info anchor="bottom" id="Docker" order="7" />
       <window_info anchor="bottom" id="Inspection Results" weight="0.3296593" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32865733" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32865733" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -417,17 +427,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="68" column="47" selection-start-line="68" selection-start-column="47" selection-end-line="68" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="310" lean-forward="true" selection-start-line="310" selection-end-line="310" />
+        <state relative-caret-position="451">
+          <caret line="332" lean-forward="true" selection-start-line="332" selection-end-line="332" />
           <folding>
             <element signature="e#0#77#0" expanded="true" />
           </folding>
@@ -436,8 +439,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="113" column="52" selection-start-line="113" selection-start-column="52" selection-end-line="113" selection-end-column="52" />
+        <state relative-caret-position="514">
+          <caret line="196" column="74" selection-start-line="196" selection-start-column="74" selection-end-line="196" selection-end-column="74" />
           <folding>
             <element signature="e#0#101#0" expanded="true" />
           </folding>
@@ -446,18 +449,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/cip_books.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="263" lean-forward="true" selection-start-line="263" selection-end-line="263" />
+        <state relative-caret-position="419">
+          <caret line="260" column="123" selection-start-line="260" selection-start-column="123" selection-end-line="260" selection-end-column="123" />
           <folding>
             <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="38" column="63" selection-start-line="38" selection-start-column="63" selection-end-line="38" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/templates/books_management.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="424" column="65" selection-start-line="424" selection-start-column="65" selection-end-line="424" selection-end-column="65" />
+        <state relative-caret-position="45">
+          <caret line="3" column="119" selection-start-line="3" selection-start-column="119" selection-end-line="3" selection-end-column="119" />
           <folding>
             <element signature="e#636#643#1" expanded="true" />
             <element signature="n#style#0;n#ul#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />

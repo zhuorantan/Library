@@ -117,6 +117,10 @@
                         <td id="reservation_date{{ index }}"></td>
                     </tr>
                     <tr>
+                        <th class="text-right">可借日期</th>
+                        <td id="reservation_available_date{{ index }}"></td>
+                    </tr>
+                    <tr>
                         <th class="text-right">终止日期</th>
                         <td id="reservation_deadline{{ index }}"></td>
                     </tr>
@@ -254,6 +258,7 @@
                     $('#reservation_reader_tel{{ index }}').html(data.reader.tel);
                     $('#reservation_reader_email{{ index }}').html(data.reader.email);
                     $('#reservation_date{{ index }}').html(moment(data.reserve_date).format('YYYY 年 M 月 D 日'));
+                    $('#reservation_available_date{{ index }}').html(moment(data.available_date).format('YYYY 年 M 月 D 日'));
                     $('#reservation_deadline{{ index }}').html(moment(data.reserve_date).add(data.duration, 'days').format('YYYY 年 M 月 D 日'));
 
                     $('#reservationModal{{ index }}').modal();

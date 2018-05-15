@@ -36,7 +36,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <p class="navbar-text">欢迎你，{{ current_user.name }}</p>
+                <p class="navbar-text">欢迎你，{% block user_name %}{{ current_user.name }}{% endblock %}</p>
                 <li><a href="{{ url_for('logout') }}">登出</a></li>
             </ul>
         </div>

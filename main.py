@@ -326,12 +326,12 @@ def book_entry():
         cip = CIP(isbn=isbn, book_name=book_name, author=author, publisher=publisher, publish_year_month=publish_year_month, librarian=librarian)
 
     location = request.form['location']
-    book_id = request.form['book_id']
+    book_ids = request.form.getlist('book_id')
 
     status = BookStatus.available if location == '图书流通室' else BookStatus.unborrowable
-    book = Book(id=book_id, cip=cip, location=location, status=status, librarian=librarian)
+    books = [Book(id=book_id, cip=cip, location=location, status=status, librarian=librarian) for book_id in book_ids]
 
-    db_session.add(book)
+    db_session.add_all(books)
     db_session.commit()
     return redirect('/')
 
@@ -393,6 +393,7 @@ def book_return():
     if len(pending_reservations) > 0:
         reservation = pending_reservations[0]
         reservation.book = book
+        reservation.available_date = date.today()
         book.status = BookStatus.reserved
     else:
         book.status = BookStatus.available
