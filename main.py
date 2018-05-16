@@ -4,7 +4,7 @@ from database import db_session, init_db, populate_data
 from tables import *
 from datetime import date, datetime, timedelta
 from sqlalchemy import or_
-# from gmail import send_email
+from gmail import send_email
 
 app = Flask(__name__)
 
@@ -279,5 +279,6 @@ def shutdown_session(exception=None):
 
 
 app.secret_key = 'com.jerome-tan.library'
-app.config['ENV'] = 'development'
-app.run(host='0.0.0.0', debug=True)
+if __name__ == "__main__":
+    app.config['ENV'] = 'production'
+    app.run(host='0.0.0.0', debug=False)
