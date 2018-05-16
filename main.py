@@ -2,8 +2,9 @@ from flask import Flask, jsonify, request, render_template, redirect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from database import db_session, init_db, populate_data
 from tables import *
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from sqlalchemy import or_
+# from gmail import send_email
 
 app = Flask(__name__)
 
@@ -222,6 +223,9 @@ def book_return():
         reservation.book = book
         reservation.available_date = date.today()
         book.status = BookStatus.reserved
+
+        message = '%s，\n    您好！\n    您预约的书《%s》可借了，请在%s之前到%s借书，否则预约将被取消。' % (reservation.reader.name, book.cip.book_name, (date.today() + timedelta(days=reservation.duration)).strftime('%Y年%m月%d日'), book.location)
+        send_email(reservation.reader.email, '您预约的书%s可借了' % book.name, message)
     else:
         book.status = BookStatus.available
 

@@ -194,7 +194,7 @@
             $.post('book_borrow', data, function (data) {
                 $('#borrowModal{{ index }}').modal('hide');
                 if (data.success) {
-                    $table.bootstrapTable('refresh');
+                    $('#table').bootstrapTable('refresh');
                 } else {
                     $('#borrow_failure_alert').fadeTo(2000, 500).slideUp(500, function(){
                         $('#borrow_failure_alert').slideUp(500);
