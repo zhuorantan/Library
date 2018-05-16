@@ -4,7 +4,7 @@ from database import db_session, init_db, populate_data
 from tables import *
 from datetime import date, datetime, timedelta
 from sqlalchemy import or_
-# from gmail import send_email
+from gmail import send_email
 
 app = Flask(__name__)
 
