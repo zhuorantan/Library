@@ -10,9 +10,9 @@
         <i class="glyphicon glyphicon-plus-sign"></i> 入库
     </button>
 </div>
-<div class="alert alert-success" id="reserve_success_alsert" role="alert">预约成功</div>
-<div class="alert alert-danger" id="borrow_failure_alert" role="alert"><strong>借书失败</strong>，超过最大借书数量</div>
-<div class="alert alert-warning alert-dismissible" id="return_delay_alert" role="alert">
+<div class="alert alert-success" id="reserve_success_alsert" role="alert" style="display: none;">预约成功</div>
+<div class="alert alert-danger" id="borrow_failure_alert" role="alert" style="display: none;"><strong>借书失败</strong>，超过最大借书数量</div>
+<div class="alert alert-warning alert-dismissible" id="return_delay_alert" role="alert" style="display: none;">
   <button type="button" class="close" onclick="$('#return_delay_alert').hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <strong>还书超期 <span id="return_delay_days"></span> 天</strong>
 </div>
@@ -301,10 +301,6 @@
                 height: getHeight()
             });
         });
-
-        $('#reserve_success_alsert').hide();
-        $('#borrow_failure_alert').hide();
-        $('#return_delay_alert').hide();
 
         $('#form_entry').submit(function(e) {
             e.preventDefault();
