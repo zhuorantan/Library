@@ -33,6 +33,7 @@ def populate_data():
     reader1 = Reader(id='rea0001', name='李明', password='rea0001', tel='18800201111', email='18800201111@163.com')
     reader2 = Reader(id='rea0002', name='刘晓明', password='rea0002', tel='18800202222', email='18800202222@163.com')
     reader3 = Reader(id='rea0003', name='张颖', password='rea0003', tel='18800203333', email='18800203333@163.com')
+    reader4 = Reader(id='rea0004', name='谭卓然', password='rea0004', tel='18800200539', email='t@jerometan.io')
 
     cip1 = CIP(isbn='ISBN7-302-02368-9', book_name='数据结构', author='严蔚敏 吴伟民', publisher='清华大学出版社',
                publish_year_month=date(year=1997, month=4, day=1), librarian=librarian1)
@@ -48,7 +49,7 @@ def populate_data():
     book6 = Book(id='C357.2', cip=cip2, location='图书流通室', status=BookStatus.available, librarian=librarian1)
 
     db_session.add_all([librarian1, librarian2, librarian3,
-                        reader1, reader2, reader3,
+                        reader1, reader2, reader3, reader4,
                         cip1, cip2,
                         book1, book2, book3, book4, book5, book6])
     db_session.commit()
