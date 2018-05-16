@@ -225,7 +225,7 @@ def book_return():
         book.status = BookStatus.reserved
 
         message = '%s，\n    您好！\n    您预约的书《%s》可借了，请在%s之前到%s借书，否则预约将被取消。\n\n\n\n图书馆' % (reservation.reader.name, book.cip.book_name, (date.today() + timedelta(days=reservation.duration)).strftime('%Y年%m月%d日'), book.location)
-        send_email(reservation.reader.email, '您预约的书%s可借了' % book.cip.book_name, message)
+        send_email(reservation.reader.email, '您预约的书《%s》可借了' % book.cip.book_name, message)
     else:
         book.status = BookStatus.available
 
