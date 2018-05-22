@@ -6,6 +6,11 @@
 python main.py
 ```
 
+To populate example data, uncomment the following line in `main.py`
+```python
+populate_data()
+```
+
 # Gmail
 To enable the email notification via Gmail API, follow this [instruction](https://developers.google.com/gmail/api/quickstart/python) and uncomment the following two lines in `main.py`
 ```python
